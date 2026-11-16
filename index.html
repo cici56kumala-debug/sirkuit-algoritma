@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sirkuit Algoritma – Program Devi Afnita</title>
+<script>
+(function(){
+  var shown=false;
+  function banner(m){
+    if(shown) return; shown=true;
+    function go(){
+      var d=document.getElementById("sysmsg"); if(!d) return;
+      d.innerHTML="<b>Game belum bisa berjalan normal di browser ini.</b> Buka lewat <b>Google Chrome</b> (perbarui Chrome jika perlu), lalu muat ulang. Jika tetap gagal, lapor ke guru.<br><small>Kode: "+String(m).replace(/</g,"&lt;")+"</small>";
+      d.style.display="block";
+    }
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",go); else go();
+  }
+  window.addEventListener("error",function(e){ banner((e&&e.message)||"error"); });
+})();
+</script>
+<style>
+:root{
+  --bg:#e6e9ee; --card:#ffffff; --ink:#1c2029; --muted:#586072; --line:#cbd2dc;
+  --asphalt:#262a33; --yellow:#ffbf1f; --red:#d7263d; --white:#f7f7f4; --teal:#16a394;
+  --s1:#1f6fd1; --s2:#f2b01e; --s3:#1b7f44;
+  --good:#1a7f45; --good-bg:#e2f4e9; --bad:#c3202f; --bad-bg:#fbe6e9;
+  --code-bg:#1f2430; --code-ink:#e9edf5; --kw:#ffbf1f; --focus:#1f6fd1;
+  --display:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,"Roboto Mono","Courier New",monospace;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#11141a; --card:#1b2029; --ink:#eef1f6; --muted:#9ba5b7; --line:#2f3644;
+    --good:#4fcf86; --good-bg:#12301f; --bad:#ff7a87; --bad-bg:#3a151b;
+    --code-bg:#0d1016; --focus:#ffbf1f; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11141a; --card:#1b2029; --ink:#eef1f6; --muted:#9ba5b7; --line:#2f3644;
+  --good:#4fcf86; --good-bg:#12301f; --bad:#ff7a87; --bad-bg:#3a151b;
+  --code-bg:#0d1016; --focus:#ffbf1f; color-scheme:dark;
+}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none !important}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.app{max-width:760px;margin:0 auto;padding:14px 14px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-bottom:12px}
+.brand{font-family:var(--display);font-size:1.15rem}
+.credit{background:var(--asphalt);color:#fff;padding:6px 14px;border-radius:999px;font-size:.88rem}
+.credit b{color:var(--yellow)}
+.foot{margin-top:26px;text-align:center;color:var(--muted);font-size:.9rem}
+.foot b{color:var(--ink)}
+
+.screen{margin-top:6px}
+h1.title{font-family:var(--display);font-weight:800;font-size:2.4rem;font-size:clamp(2.1rem,9vw,3.3rem);line-height:1;margin:6px 0 10px;letter-spacing:.01em}
+.lead{margin:0 0 18px;color:var(--muted);max-width:58ch}
+.card{background:var(--card);border-radius:16px;padding:18px}
+.card + .card{margin-top:14px}
+
+.btn{font-family:var(--display);font-size:1rem;letter-spacing:.02em;padding:12px 22px;border:0;border-radius:12px;
+  background:var(--yellow);color:#1c2029;box-shadow:0 5px 0 #b98400;cursor:pointer;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b98400}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.btn.ghost:active{transform:none;opacity:.7}
+.btn.small{font-size:.85rem;padding:8px 14px;box-shadow:inset 0 0 0 2px var(--ink)}
+.btn.wide{width:100%}
+
+label.field{display:block;font-weight:700;margin-bottom:6px}
+input[type=text]{width:100%;font:inherit;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.err{color:var(--bad);font-weight:700;margin:6px 0 0}
+.rules{margin:16px 0;padding:0;list-style:none;display:grid;gap:8px}
+.rules li{display:flex;align-items:flex-start}
+.rules li i{margin-right:10px}
+.rules i{flex:none;font-style:normal;font-family:var(--display);width:28px;height:28px;border-radius:50%;background:var(--asphalt);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.note{font-size:.92rem;color:var(--muted);margin:14px 0 0}
+h3.h{font-size:1.1rem;margin:0 0 8px}
+
+/* ===== HUD ===== */
+.hud{display:grid;grid-template-columns:1.15fr .85fr 1fr 1fr 1.15fr;gap:5px;margin-bottom:8px}
+.hud div{background:var(--card);border-radius:10px;padding:5px 5px 5px 7px;min-width:0}
+.hud span{display:block;font-size:.66rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hud b{display:block;font-size:.86rem;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hud .low b{color:var(--bad)}
+
+.stage{position:relative;max-width:420px;margin:0 auto;border-radius:14px;overflow:hidden;background:#2f8f4e;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.stage canvas{display:block;width:100%;height:auto;touch-action:none}
+.flash{position:absolute;left:0;right:0;top:26%;text-align:center;font-family:var(--display);font-size:1.7rem;
+  color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.6),0 0 12px rgba(0,0,0,.5);opacity:0;pointer-events:none}
+.flash.good{color:#ffe36b} .flash.bad{color:#ff8a96}
+.flash.on{animation:pop 1.2s ease-out}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}15%{opacity:1;transform:scale(1.1)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-14px)}}
+@media (prefers-reduced-motion:reduce){.flash.on{animation:none;opacity:1}}
+.pad{display:flex;max-width:420px;margin:8px auto 0}
+.pad .btn{flex:1;padding:16px 10px;margin:0 5px;min-height:64px;font-size:1.1rem}
+.hint{max-width:420px;margin:10px auto 0;text-align:center;color:var(--muted);font-size:.92rem}
+
+/* ===== Soal (modal) ===== */
+#qmodal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(10,12,18,.58)}
+#qmodal .wrap{width:100%;max-width:680px;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow:auto;border-radius:16px}
+#qmodal .wrap:focus{outline:none}
+#qmodal{--sec:var(--s1);--sec-ink:#fff}
+.qhead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sign{font-family:var(--display);background:var(--sec);color:var(--sec-ink);padding:7px 14px;border-radius:9px;
+  outline:2px solid var(--sec-ink);outline-offset:-5px;font-size:.95rem}
+.qmeta{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem;color:var(--muted)}
+.qmeta span{margin-right:14px}
+.qmeta b{color:var(--ink);font-variant-numeric:tabular-nums}
+.qmeta .low b{color:var(--bad)}
+.tbar{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:0 0 14px}
+.tbar i{display:block;height:100%;width:100%;background:var(--good)}
+.tbar.low i{background:var(--bad)}
+.qcard{background:var(--card);border-radius:16px;padding:16px 16px 16px 20px;border-left:10px solid var(--sec)}
+.qtext{font-size:1.1rem;font-weight:700;margin:0 0 12px}
+pre.code{margin:0 0 14px;padding:14px 16px;border-radius:10px;background:var(--code-bg);color:var(--code-ink);
+  font-family:var(--mono);font-size:.92rem;line-height:1.6;overflow-x:auto;white-space:pre}
+pre.code .kw{color:var(--kw);font-weight:700}
+.opts{display:grid;gap:10px}
+@media (min-width:640px){.opts{grid-template-columns:1fr 1fr}}
+.opt{display:flex;align-items:center;text-align:left;width:100%;min-height:54px;padding:10px 12px;
+  font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:12px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--sec)}
+.opt .ltr{flex:none;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:.85rem;background:var(--asphalt);color:#fff}
+.opt .otx{flex:1;margin-left:12px}
+.opt .mark{flex:none;font-weight:700;width:1.2em;text-align:center}
+.opt:disabled{cursor:default}
+.opt.correct{background:var(--good-bg);border-color:var(--good)}
+.opt.correct .mark{color:var(--good)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.opt.wrong .mark{color:var(--bad)}
+.opt.dim{opacity:.55}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--bg)}
+.feedback.ok{background:var(--good-bg)} .feedback.no{background:var(--bad-bg)}
+.verdict{font-family:var(--display);font-size:1.05rem;margin:0 0 4px}
+.feedback.ok .verdict{color:var(--good)} .feedback.no .verdict{color:var(--bad)}
+.expl{margin:0 0 14px}
+
+/* ===== Hasil ===== */
+.rname{font-family:var(--display);font-size:1.9rem;font-size:clamp(1.6rem,7vw,2.4rem);line-height:1.1;margin:0 0 4px;overflow-wrap:anywhere}
+.rhead{margin:0 0 2px;color:var(--muted);font-weight:700}
+.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:14px 0}
+@media (min-width:560px){.grid4{grid-template-columns:repeat(4,1fr)}}
+.grid4 div{background:var(--bg);border-radius:12px;padding:10px 12px}
+.grid4 b{display:block;font-size:1.4rem;font-variant-numeric:tabular-nums}
+.grid4 span{color:var(--muted);font-size:.88rem}
+.secrow{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;margin:8px 0}
+.secrow .bar{height:12px;border-radius:6px;background:var(--line);overflow:hidden}
+.secrow .bar i{display:block;height:100%}
+.secrow output{font-variant-numeric:tabular-nums;font-weight:700}
+.actions{display:flex;flex-wrap:wrap;margin-top:18px}
+.actions .btn{margin:0 12px 12px 0}
+table.board{width:100%;border-collapse:collapse;font-size:.95rem}
+table.board th,table.board td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
+table.board th{color:var(--muted);font-size:.82rem;font-weight:700}
+table.board td.n,table.board th.n{text-align:right;font-variant-numeric:tabular-nums}
+table.board tr.me td{background:var(--good-bg);font-weight:700}
+details.rev{border:2px solid var(--line);border-radius:12px;margin:8px 0;padding:0}
+details.rev summary{cursor:pointer;padding:10px 12px;font-weight:700}
+details.rev .in{padding:0 12px 12px}
+details.rev p{margin:6px 0}
+h2.h2{font-size:1.1rem;margin:22px 0 6px}
+/* ===== Kompatibilitas HP & sentuhan ===== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.brand,.btn,.sign,.verdict,.rname,.flash,.ltr,.rules i{font-weight:800}
+button,.stage,.pad{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+input[type=text]{font-size:18px;-webkit-appearance:none;appearance:none;-webkit-user-select:text;user-select:text;min-height:50px}
+.opt{min-height:56px}
+.credit{margin-left:8px}
+#qmodal .wrap{-webkit-overflow-scrolling:touch}
+.stage{width:100%}
+body.playing .top,body.playing .foot,body.playing .hint{display:none}
+body.playing .app{padding-top:6px;padding-bottom:6px}
+#sysmsg{position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#fff3cd;color:#3b2f00;border:2px solid #e0a800;border-radius:12px;padding:10px 12px;font-size:.9rem}
+</style>
+</head>
+<body>
+<div id="sysmsg" style="display:none" role="alert"></div>
+<noscript><p style="padding:16px"><b>JavaScript mati.</b> Aktifkan JavaScript di browser agar game bisa dimainkan.</p></noscript>
+<main class="app">
+
+  <div class="top">
+    <div class="brand">Sirkuit Algoritma</div>
+    <div class="credit">Program: <b>Devi Afnita</b></div>
+  </div>
+
+  <!-- ===== Layar awal ===== -->
+  <section class="screen" id="start">
+    <h1 class="title">Sirkuit<br>Algoritma</h1>
+    <p class="lead">Kemudikan mobilmu di lintasan. Setiap rintangan di jalan memunculkan satu soal tentang runtutan, percabangan, atau perulangan. Jawab dengan benar untuk menjebol rintangan, jawab salah dan mobilmu menabrak.</p>
+    <div class="card">
+      <label class="field" for="nama">Nama siswa</label>
+      <input type="text" id="nama" maxlength="40" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Tulis nama lengkapmu">
+      <p class="err" id="namaErr" hidden>Isi nama siswa dulu sebelum mulai.</p>
+      <ul class="rules">
+        <li><i>50</i><span>50 soal acak dari bank 80 soal. Ada 50 rintangan, satu soal tiap rintangan.</span></li>
+        <li><i>1'</i><span>Waktu mengerjakan tiap soal 1 menit. Jika habis, soal dihitung salah.</span></li>
+        <li><i>90'</i><span>Waktu total seluruh balapan 90 menit.</span></li>
+        <li><i>2</i><span>Setiap jawaban benar bernilai 2 poin, jadi skor dasarmu adalah jumlah jawaban benar dikali 2 (maksimal 100).</span></li>
+        <li><i>-½</i><span>Menabrak mobil lain atau lubang mengurangi skor 0,5 poin. Tulisan -0,5 muncul di atas mobilmu. Skor akhir minimal 0.</span></li>
+        <li><i>🔀</i><span>Soal dan pilihan jawaban diacak untuk setiap siswa, jadi urutannya berbeda dengan temanmu.</span></li>
+        <li><i>↔</i><span>Lintasan ramai dan penuh bahaya! Pindah jalur dengan tombol ◀ ▶ di bawah lintasan, geser jari / ketuk sisi kiri-kanan lintasan, atau (di komputer) tombol ← → / A D. Awas mobil lain dan batu (berhenti sejenak), lubang dan kerucut (melambat), serta bercak oli (selip dan kemudi macet sebentar).</span></li>
+      </ul>
+      <p class="err" id="lockMsg" hidden></p>
+      <button class="btn wide" id="btnStart" type="button">Mulai balapan</button>
+      <p class="note"><a href="#" id="btnTeacher" style="color:inherit">Reset izin main (khusus guru)</a></p>
+      <p class="note">Soal memakai pseudocode. Tanda <code>←</code> artinya "diisi dengan". Saat soal muncul, tombol <code>A</code>–<code>D</code> atau <code>1</code>–<code>4</code> di keyboard bisa dipakai untuk menjawab.</p>
+    </div>
+    <div class="card" id="boardStartCard" hidden>
+      <h3 class="h">Papan skor (di perangkat ini)</h3>
+      <div id="boardStart"></div>
+      <div class="actions"><button class="btn small" id="btnClear" type="button">Hapus papan skor</button></div>
+    </div>
+  </section>
+
+  <!-- ===== Layar permainan ===== -->
+  <section class="screen" id="game" hidden>
+    <div class="hud">
+      <div><span>Siswa</span><b id="hName">-</b></div>
+      <div><span>Skor</span><b id="hScore">0</b></div>
+      <div><span>Streak</span><b id="hStreak">0</b></div>
+      <div><span>Soal</span><b id="hObs">1/50</b></div>
+      <div id="hTimeWrap"><span>Waktu</span><b id="hTime">90:00</b></div>
+    </div>
+    <div class="stage">
+      <canvas id="cv" role="img" aria-label="Lintasan balapan. Mobil merah melaju ke rintangan berikutnya."></canvas>
+      <div class="flash" id="flash" role="status" aria-live="polite"></div>
+    </div>
+    <div class="pad">
+      <button class="btn" id="btnL" type="button" aria-label="Pindah jalur ke kiri">◀ Kiri</button>
+      <button class="btn" id="btnR" type="button" aria-label="Pindah jalur ke kanan">Kanan ▶</button>
+    </div>
+    <p class="hint">Pindah jalur: tombol ◀ ▶, geser jari, atau tombol ← → / A D. Hindari batu, lubang, oli, kerucut, dan mobil lain. Tabrak mobil atau lubang: skor -0,5. Mobil berhenti otomatis di depan palang soal.</p>
+  </section>
+
+  <!-- ===== Layar hasil ===== -->
+  <section class="screen" id="result" hidden>
+    <div class="card">
+      <p class="rhead" id="rHead"></p>
+      <h2 class="rname" id="rName"></h2>
+      <p id="rTitle" style="margin:0;font-weight:700"></p>
+      <p id="rPenalty" style="margin:6px 0 0;color:var(--muted)"></p>
+      <div class="grid4">
+        <div><b id="rScore"></b><span>skor (maks 100)</span></div>
+        <div><b id="rSalah"></b><span>jawaban salah</span></div>
+        <div><b id="rCorrect"></b><span>jawaban benar</span></div>
+        <div><b id="rTime"></b><span>waktu mengerjakan</span></div>
+      </div>
+      <h3 class="h">Hasil per sektor</h3>
+      <div id="rSectors"></div>
+      <div class="actions">
+        <button class="btn" id="btnAgain" type="button">Kembali ke awal</button>
+        <button class="btn ghost" id="btnRetry" type="button" hidden>Latih soal yang salah</button>
+        <button class="btn ghost" id="btnCopy" type="button">Salin hasil</button>
+      </div>
+    </div>
+    <div class="card" id="boardResCard" hidden>
+      <h3 class="h">Papan skor (di perangkat ini)</h3>
+      <div id="boardRes"></div>
+    </div>
+    <div id="reviewWrap" hidden>
+      <h2 class="h2">Tinjau soal yang salah</h2>
+      <div id="review"></div>
+    </div>
+  </section>
+
+  <p class="foot">Program oleh <b>Devi Afnita</b></p>
+</main>
+
+<div id="pinBox" style="display:none;position:fixed;top:0;right:0;bottom:0;left:0;z-index:60;background:rgba(10,12,18,.6);align-items:center;justify-content:center;padding:12px">
+  <div class="card" style="width:100%;max-width:340px">
+    <p id="pinMsg" style="margin-top:0;font-weight:700"></p>
+    <input type="password" id="pinIn" autocomplete="off" style="width:100%;font-size:18px;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)">
+    <p class="err" id="pinErr" hidden>PIN salah.</p>
+    <div class="actions"><button class="btn" id="pinOk" type="button">OK</button><button class="btn ghost" id="pinNo" type="button">Batal</button></div>
+  </div>
+</div>
+<!-- ===== Soal muncul di rintangan ===== -->
+<div id="qmodal" hidden>
+  <div class="wrap" id="qwrap" role="dialog" aria-modal="true" aria-labelledby="signName" tabindex="-1">
+    <div class="qcard">
+      <div class="qhead">
+        <div class="sign" id="signName">Sektor 1: Runtutan</div>
+        <div class="qmeta">
+          <span>Soal <b id="qNo">1</b>/<b id="qTot">50</b></span>
+          <span id="tmWrap">Waktu soal <b id="tm">01:00</b></span>
+        </div>
+      </div>
+      <div class="tbar" id="tbarWrap" aria-hidden="true"><i id="tbar"></i></div>
+      <p class="qtext" id="qtext"></p>
+      <pre class="code" id="qcode" hidden></pre>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="fb" role="status" aria-live="polite" hidden>
+        <p class="verdict" id="verdict"></p>
+        <p class="expl" id="expl"></p>
+        <button class="btn" id="btnNext" type="button">Lanjut</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const L = (...lines) => lines.join("\n");
+
+const SECTORS = [
+  {name:"Runtutan",    desc:"Instruksi dijalankan berurutan.",   css:"var(--s1)", hex:"#1f6fd1", ink:"#ffffff"},
+  {name:"Percabangan", desc:"Langkah dipilih berdasarkan kondisi.", css:"var(--s2)", hex:"#f2b01e", ink:"#1c2029"},
+  {name:"Perulangan",  desc:"Instruksi diulang.",                css:"var(--s3)", hex:"#1b7f44", ink:"#ffffff"}
+];
+
+const Q = [
+/* ---------- Sektor 1: Runtutan (16 soal) ---------- */
+{s:0,q:"Struktur dasar algoritma yang menjalankan instruksi satu per satu dari atas ke bawah disebut …",
+ o:["Runtutan (sequence)","Percabangan (selection)","Perulangan (iteration)","Rekursi"],
+ e:"Pada runtutan, instruksi dikerjakan berurutan sesuai penulisannya, masing-masing satu kali."},
+{s:0,q:"Dua instruksi dalam struktur runtutan ditukar urutannya. Apa akibatnya?",
+ o:["Hasil algoritma bisa berubah","Hasil selalu tetap sama","Algoritma otomatis berhenti","Komputer memperbaiki urutan sendiri"],
+ e:"Komputer menjalankan persis sesuai urutan tulisan, jadi urutan yang salah dapat menghasilkan keluaran yang salah."},
+{s:0,q:"Urutan paling logis untuk memulai balapan: (A) Injak gas, (B) Masuk ke mobil, (C) Nyalakan mesin, (D) Pasang sabuk pengaman.",
+ o:["B – D – C – A","A – B – C – D","C – A – B – D","D – A – B – C"],
+ e:"Masuk ke mobil, pasang sabuk, nyalakan mesin, baru injak gas."},
+{s:0,q:"Apa keluaran algoritma berikut?",
+ c:L("a ← 5","b ← 3","a ← a + b","tampilkan a"),
+ o:["8","53","2","15"],
+ e:"Nilai a diganti dengan a + b = 5 + 3 = 8."},
+{s:0,q:"Apa keluaran algoritma berikut?",
+ c:L("x ← 10","x ← x * 2","x ← x - 4","tampilkan x"),
+ o:["16","20","6","14"],
+ e:"x = 10, lalu x = 10 × 2 = 20, lalu x = 20 − 4 = 16."},
+{s:0,q:"Apa keluaran algoritma berikut?",
+ c:L("a ← 4","b ← 9","temp ← a","a ← b","b ← temp","tampilkan a, b"),
+ o:["9 4","4 9","9 9","4 4"],
+ e:"temp menyimpan nilai a (4). Lalu a diisi b (9) dan b diisi temp (4). Nilai a dan b tertukar."},
+{s:0,q:"Apa keluaran algoritma berikut?",
+ c:L("jarak ← 120","waktu ← 2","kecepatan ← jarak / waktu","tampilkan kecepatan"),
+ o:["60","240","122","118"],
+ e:"kecepatan = jarak / waktu = 120 / 2 = 60."},
+{s:0,q:"Urutan umum tahapan sebuah algoritma sederhana adalah …",
+ o:["Input → Proses → Output","Output → Proses → Input","Proses → Output → Input","Input → Output → Proses"],
+ e:"Data dimasukkan (input), diolah (proses), lalu hasilnya ditampilkan (output)."},
+{s:0,q:"Pada flowchart, simbol jajar genjang digunakan untuk …",
+ o:["Input atau output","Proses perhitungan","Pengambilan keputusan","Awal atau akhir"],
+ e:"Jajar genjang = input/output, persegi panjang = proses, belah ketupat = keputusan, oval = awal/akhir."},
+{s:0,q:"Pada flowchart, simbol oval (terminator) digunakan untuk menandai …",
+ o:["Awal dan akhir algoritma","Pengambilan keputusan","Proses perhitungan","Masukan data"],
+ e:"Oval dipakai untuk Mulai dan Selesai."},
+{s:0,q:"Berapa nilai bensin yang ditampilkan?",
+ c:L("bensin ← 40","bensin ← bensin - 15","bensin ← bensin - 10","tampilkan bensin"),
+ o:["15","25","55","30"],
+ e:"40 − 15 = 25, lalu 25 − 10 = 15."},
+{s:0,q:"Apa keluaran algoritma berikut?",
+ c:L("a ← 2","b ← a * 3","a ← b + 1","tampilkan a, b"),
+ o:["7 6","3 6","7 3","2 6"],
+ e:"b = 2 × 3 = 6. Lalu a = 6 + 1 = 7. Yang ditampilkan a lalu b, yaitu 7 6."},
+{s:0,q:"Apa keluaran algoritma berikut?",
+ c:L('nama ← "Budi"','tampilkan "Halo, " + nama'),
+ o:["Halo, Budi","Halo, nama","Budi Halo,","Halo, + nama"],
+ e:"Tanda + menggabungkan teks, dan nama diganti dengan isinya, yaitu Budi."},
+{s:0,q:"Sebuah algoritma runtutan berisi 5 instruksi. Berapa kali tiap instruksi dijalankan?",
+ o:["Tepat satu kali","Lima kali","Tergantung kondisi","Berulang tanpa henti"],
+ e:"Runtutan tidak memilih dan tidak mengulang, jadi setiap instruksi dijalankan satu kali."},
+{s:0,q:"Salah satu ciri algoritma yang baik adalah langkahnya jelas dan …",
+ o:["berakhir setelah sejumlah langkah (berhingga)","berjalan tanpa pernah berhenti","hanya bisa dipahami pembuatnya","selalu memakai perulangan"],
+ e:"Algoritma harus punya akhir. Algoritma yang tidak pernah berhenti bukan algoritma yang baik."},
+{s:0,q:"Apa keluaran algoritma berikut?",
+ c:L("p ← 6","l ← 4","luas ← p * l","keliling ← 2 * (p + l)","tampilkan keliling"),
+ o:["20","24","10","48"],
+ e:"keliling = 2 × (6 + 4) = 20. Angka 24 adalah luas, bukan keliling."},
+
+/* ---------- Sektor 2: Percabangan (17 soal) ---------- */
+{s:1,q:"Struktur algoritma yang memilih langkah mana yang dijalankan berdasarkan suatu kondisi disebut …",
+ o:["Percabangan (selection)","Runtutan (sequence)","Perulangan (iteration)","Deklarasi variabel"],
+ e:"Percabangan memeriksa kondisi lalu memilih jalur yang sesuai."},
+{s:1,q:"Pasangan kata kunci yang umum untuk percabangan dua pilihan adalah …",
+ o:["jika … maka … jika tidak","untuk … sampai …","selama … ulangi","mulai … selesai"],
+ e:"Jika (if) memeriksa kondisi, jika tidak (else) menangani keadaan sebaliknya."},
+{s:1,q:"Pada flowchart, simbol belah ketupat digunakan untuk …",
+ o:["Pengambilan keputusan (kondisi)","Input atau output","Proses perhitungan","Awal atau akhir"],
+ e:"Belah ketupat memiliki dua jalur keluar: ya/benar dan tidak/salah."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("kecepatan ← 90","jika kecepatan > 80 maka",'   tampilkan "Ngebut"',"jika tidak",'   tampilkan "Aman"'),
+ o:["Ngebut","Aman","Ngebut Aman","Tidak ada keluaran"],
+ e:"90 > 80 bernilai benar, sehingga cabang jika dijalankan dan cabang jika tidak dilewati."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("nilai ← 70","jika nilai >= 75 maka",'   tampilkan "Lulus"',"jika tidak",'   tampilkan "Remidi"'),
+ o:["Remidi","Lulus","Lulus Remidi","Terjadi kesalahan"],
+ e:"70 >= 75 bernilai salah, sehingga cabang jika tidak yang dijalankan."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("n ← 0",'jika n > 0 maka tampilkan "Positif"','jika tidak, jika n < 0 maka tampilkan "Negatif"','jika tidak tampilkan "Nol"'),
+ o:["Nol","Positif","Negatif","Positif Nol"],
+ e:"0 > 0 salah, 0 < 0 juga salah, sehingga jatuh ke cabang terakhir: Nol."},
+{s:1,q:"Kondisi dalam percabangan akan dievaluasi menjadi nilai …",
+ o:["Benar atau salah (boolean)","Angka 1 sampai 10","Teks saja","Selalu benar"],
+ e:"Kondisi hanya punya dua kemungkinan hasil: benar atau salah."},
+{s:1,q:"Pada percabangan dua pilihan (jika … jika tidak), berapa cabang yang dijalankan dalam sekali eksekusi?",
+ o:["Hanya satu cabang","Kedua cabang selalu","Tidak ada cabang","Tergantung jumlah baris"],
+ e:"Hanya salah satu cabang yang dijalankan, sesuai hasil kondisi."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("umur ← 17","punyaSIM ← benar","jika umur >= 17 DAN punyaSIM = benar maka",'   tampilkan "Boleh balapan"',"jika tidak",'   tampilkan "Tidak boleh"'),
+ o:["Boleh balapan","Tidak boleh","Boleh balapan Tidak boleh","Tidak ada keluaran"],
+ e:"Operator DAN bernilai benar jika kedua syarat benar. Umur 17 ≥ 17 dan punyaSIM benar."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L('lampu ← "kuning"','jika lampu = "merah" ATAU lampu = "kuning" maka','   tampilkan "Berhenti"',"jika tidak",'   tampilkan "Jalan"'),
+ o:["Berhenti","Jalan","Berhenti Jalan","Tidak ada keluaran"],
+ e:"Operator ATAU bernilai benar jika salah satu syarat benar. lampu = kuning sudah cukup."},
+{s:1,q:"Operator relasional yang berarti 'tidak sama dengan' adalah …",
+ o:["≠ (atau !=)","=","≥","≤"],
+ e:"≠ bernilai benar jika kedua nilai berbeda."},
+{s:1,q:"Apa keluaran algoritma berikut? (mod menghasilkan sisa bagi)",
+ c:L("a ← 8","jika a mod 2 = 0 maka",'   tampilkan "Genap"',"jika tidak",'   tampilkan "Ganjil"'),
+ o:["Genap","Ganjil","Genap Ganjil","8"],
+ e:"8 mod 2 = 0 (sisa bagi nol), jadi kondisi benar dan hasilnya Genap."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("x ← 15","jika x > 10 maka","   jika x > 20 maka",'      tampilkan "A"',"   jika tidak",'      tampilkan "B"',"jika tidak",'   tampilkan "C"'),
+ o:["B","A","C","A B"],
+ e:"x > 10 benar, masuk ke percabangan di dalamnya. x > 20 salah, jadi tampil B."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("nilai ← 82",'jika nilai >= 90 maka tampilkan "A"','jika tidak, jika nilai >= 80 maka tampilkan "B"','jika tidak, jika nilai >= 70 maka tampilkan "C"','jika tidak tampilkan "D"'),
+ o:["B","A","C","D"],
+ e:"82 >= 90 salah, 82 >= 80 benar, maka tampil B. Cabang sesudahnya dilewati."},
+{s:1,q:"Apa yang terjadi jika kondisi jika bernilai salah dan tidak ada bagian jika tidak?",
+ o:["Instruksi di dalam jika dilewati dan program lanjut ke baris berikutnya","Program berhenti dengan pesan kesalahan","Instruksi di dalam jika tetap dijalankan","Program mengulang pemeriksaan kondisi"],
+ e:"Tanpa jika tidak, tidak ada yang dikerjakan untuk kondisi salah. Program langsung melanjutkan instruksi berikutnya."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("s ← 3",'jika s > 5 maka tampilkan "X"','tampilkan "Y"'),
+ o:["Y","X","X Y","Tidak ada keluaran"],
+ e:"s > 5 salah, jadi X dilewati. Instruksi tampilkan \"Y\" berada di luar jika, sehingga selalu dijalankan."},
+{s:1,q:"Skor ≥ 100 mendapat bintang 3, skor ≥ 70 bintang 2, selain itu bintang 1. Struktur yang paling tepat adalah …",
+ o:["Percabangan bertingkat (jika … jika tidak, jika …)","Runtutan saja tanpa kondisi","Perulangan selama","Satu jika tanpa jika tidak"],
+ e:"Ada tiga kemungkinan hasil, sehingga dibutuhkan percabangan bertingkat."},
+
+/* ---------- Sektor 3: Perulangan (17 soal) ---------- */
+{s:2,q:"Struktur algoritma yang mengulang sekelompok instruksi disebut …",
+ o:["Perulangan (iteration)","Runtutan (sequence)","Percabangan (selection)","Deklarasi variabel"],
+ e:"Perulangan (loop) menjalankan instruksi yang sama berkali-kali."},
+{s:2,q:"Mobil harus mengelilingi sirkuit sebanyak 5 putaran. Struktur yang paling tepat untuk mengatur putaran itu adalah …",
+ o:["Perulangan","Runtutan satu baris","Percabangan","Input saja"],
+ e:"Pekerjaan yang sama dilakukan berulang kali, jadi dipakai perulangan."},
+{s:2,q:"Berapa kali kata Lap ditampilkan?",
+ c:L("untuk i ← 1 sampai 3",'   tampilkan "Lap"'),
+ o:["3 kali","2 kali","4 kali","1 kali"],
+ e:"i bernilai 1, 2, dan 3, sehingga badan perulangan berjalan 3 kali."},
+{s:2,q:"Apa keluaran algoritma berikut?",
+ c:L("untuk i ← 1 sampai 4","   tampilkan i"),
+ o:["1 2 3 4","0 1 2 3","1 2 3","4 3 2 1"],
+ e:"i dimulai dari 1 dan bertambah satu sampai 4."},
+{s:2,q:"Berapa nilai total yang ditampilkan?",
+ c:L("total ← 0","untuk i ← 1 sampai 5","   total ← total + i","tampilkan total"),
+ o:["15","5","10","120"],
+ e:"1 + 2 + 3 + 4 + 5 = 15."},
+{s:2,q:"Apa keluaran algoritma berikut?",
+ c:L("n ← 1","selama n <= 3","   tampilkan n","   n ← n + 1"),
+ o:["1 2 3","1 2 3 4","2 3 4","1"],
+ e:"Perulangan berjalan saat n <= 3. Setelah n menjadi 4, kondisi salah dan perulangan berhenti."},
+{s:2,q:"Masalah apa yang terjadi pada algoritma berikut?",
+ c:L("n ← 1","selama n <= 3","   tampilkan n"),
+ o:["Perulangan tak berhingga karena n tidak pernah berubah","Menampilkan 1 2 3 lalu berhenti","Tidak menampilkan apa pun","Menampilkan angka 3 saja"],
+ e:"Nilai n tidak pernah ditambah, sehingga kondisi n <= 3 selalu benar dan program terus berulang."},
+{s:2,q:"Pada perulangan selama (while), kapan kondisi diperiksa?",
+ o:["Sebelum badan perulangan dijalankan","Setelah badan perulangan dijalankan","Hanya sekali di akhir program","Tidak pernah diperiksa"],
+ e:"While memeriksa kondisi lebih dulu. Jika salah sejak awal, badan perulangan tidak dijalankan sama sekali."},
+{s:2,q:"Ciri perulangan ulangi … sampai (repeat-until) adalah …",
+ o:["Badan perulangan dijalankan minimal satu kali","Badan perulangan bisa tidak dijalankan sama sekali","Selalu mengulang tepat 10 kali","Tidak memerlukan kondisi"],
+ e:"Kondisi diperiksa di akhir, sehingga badan perulangan pasti dikerjakan sekali dulu."},
+{s:2,q:"Apa keluaran algoritma berikut?",
+ c:L("x ← 10","selama x < 5","   x ← x + 1","tampilkan x"),
+ o:["10","5","11","0"],
+ e:"10 < 5 salah sejak awal, jadi badan perulangan tidak pernah dijalankan dan x tetap 10."},
+{s:2,q:"Apa keluaran algoritma berikut?",
+ c:L("x ← 10","ulangi","   x ← x + 1","sampai x >= 5","tampilkan x"),
+ o:["11","10","5","6"],
+ e:"Badan dijalankan sekali dulu: x menjadi 11. Lalu 11 >= 5 benar sehingga berhenti."},
+{s:2,q:"Apa keluaran algoritma berikut?",
+ c:L("untuk i ← 3 turun sampai 1","   tampilkan i"),
+ o:["3 2 1","1 2 3","3 2","2 1"],
+ e:"Perulangan menurun: i bernilai 3, 2, lalu 1."},
+{s:2,q:"Berapa nilai bensin yang ditampilkan?",
+ c:L("bensin ← 100","selama bensin > 40","   bensin ← bensin - 20","tampilkan bensin"),
+ o:["40","60","20","100"],
+ e:"100 → 80 → 60 → 40. Saat bensin = 40, kondisi 40 > 40 salah sehingga berhenti."},
+{s:2,q:"Berapa kali tanda * ditampilkan?",
+ c:L("untuk a ← 1 sampai 2","   untuk b ← 1 sampai 3",'      tampilkan "*"'),
+ o:["6","5","3","2"],
+ e:"Perulangan luar 2 kali, perulangan dalam 3 kali tiap putaran: 2 × 3 = 6."},
+{s:2,q:"Berapa nilai hasil yang ditampilkan?",
+ c:L("hasil ← 1","untuk i ← 1 sampai 4","   hasil ← hasil * i","tampilkan hasil"),
+ o:["24","10","16","4"],
+ e:"1 × 1 × 2 × 3 × 4 = 24 (faktorial 4)."},
+{s:2,q:"Berapa kali badan perulangan berjalan?",
+ c:L("untuk i ← 2 sampai 10 selangkah 2","   tampilkan i"),
+ o:["5 kali","9 kali","10 kali","4 kali"],
+ e:"i bernilai 2, 4, 6, 8, 10, jadi 5 kali."},
+{s:2,q:"Berapa nilai hitung yang ditampilkan?",
+ c:L("hitung ← 0","untuk i ← 1 sampai 6","   jika i mod 2 = 0 maka","      hitung ← hitung + 1","tampilkan hitung"),
+ o:["3","6","2","4"],
+ e:"Bilangan genap dari 1 sampai 6 adalah 2, 4, 6. Jadi hitung = 3."},
+
+/* ---------- Soal tambahan: Runtutan ---------- */
+{s:0,q:"Apa keluaran algoritma berikut? (mod menghasilkan sisa bagi)",
+ c:L("a ← 7","b ← 2","hasil ← a mod b","tampilkan hasil"),
+ o:["1","3","3,5","0"],
+ e:"7 mod 2 adalah sisa pembagian 7 dibagi 2, yaitu 1."},
+{s:0,q:"Berapa nilai bayar yang ditampilkan?",
+ c:L("harga ← 50000","diskon ← 10000","bayar ← harga - diskon","tampilkan bayar"),
+ o:["40000","60000","50000","10000"],
+ e:"bayar = 50000 − 10000 = 40000."},
+{s:0,q:"Algoritma mengganti ban: (1) Turunkan dongkrak, (2) Naikkan mobil dengan dongkrak, (3) Lepas ban lama, (4) Pasang ban baru. Urutan yang benar adalah …",
+ o:["2 – 3 – 4 – 1","1 – 2 – 3 – 4","3 – 2 – 4 – 1","2 – 4 – 3 – 1"],
+ e:"Naikkan mobil, lepas ban lama, pasang ban baru, baru turunkan dongkrak."},
+{s:0,q:"Variabel dalam algoritma adalah …",
+ o:["tempat menyimpan data yang nilainya dapat berubah","instruksi yang mengulang proses","simbol untuk percabangan","hasil akhir dari seluruh algoritma"],
+ e:"Variabel adalah wadah bernama yang menyimpan nilai, dan nilainya bisa diganti selama algoritma berjalan."},
+{s:0,q:"Pada pseudocode, instruksi a ← a + 1 artinya …",
+ o:["nilai a ditambah 1, lalu disimpan kembali di a","a sama dengan a ditambah 1 (persamaan matematika)","a dibandingkan dengan a + 1","nilai a dikurangi 1"],
+ e:"Tanda ← adalah penugasan: hitung ruas kanan dulu, lalu simpan hasilnya ke variabel di kiri."},
+{s:0,q:"Apa keluaran algoritma berikut?",
+ c:L("x ← 3","y ← x * x","x ← y - x","tampilkan x, y"),
+ o:["6 9","3 9","9 6","6 3"],
+ e:"y = 3 × 3 = 9. Lalu x = 9 − 3 = 6. Yang ditampilkan x lalu y, yaitu 6 9."},
+{s:0,q:"Algoritma berikut menghitung apa, dan berapa hasilnya?",
+ c:L("kecepatan ← 80","waktu ← 2","jarak ← kecepatan * waktu","tampilkan jarak"),
+ o:["Jarak tempuh = 160","Waktu tempuh = 40","Kecepatan = 160","Jarak tempuh = 82"],
+ e:"jarak = kecepatan × waktu = 80 × 2 = 160."},
+{s:0,q:"Cara menuliskan algoritma dengan kalimat mirip bahasa pemrograman, tetapi tidak terikat aturan penulisan bahasa tertentu, disebut …",
+ o:["Pseudocode","Kode mesin","Basis data","Compiler"],
+ e:"Pseudocode mudah dibaca manusia dan bisa diterjemahkan ke bahasa pemrograman apa pun."},
+{s:0,q:"Apa keluaran algoritma berikut?",
+ c:L("a ← 10","b ← 4","a ← a - b","b ← a + b","tampilkan a, b"),
+ o:["6 10","6 4","10 4","6 6"],
+ e:"a = 10 − 4 = 6. Lalu b = a + b = 6 + 4 = 10. Hasilnya 6 10."},
+{s:0,q:"Cara menguji algoritma dengan menelusuri tiap langkahnya memakai data contoh disebut …",
+ o:["Menelusuri langkah demi langkah (dry run)","Perulangan","Percabangan","Deklarasi"],
+ e:"Dry run membantu menemukan kesalahan logika sebelum algoritma dijadikan program."},
+
+/* ---------- Soal tambahan: Percabangan ---------- */
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("suhu ← 105","jika suhu > 100 maka",'   tampilkan "Mesin panas"',"jika tidak",'   tampilkan "Normal"'),
+ o:["Mesin panas","Normal","Mesin panas Normal","Tidak ada keluaran"],
+ e:"105 > 100 benar, sehingga cabang jika dijalankan."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("bensin ← 20",'jika bensin >= 20 maka tampilkan "Cukup"','jika tidak tampilkan "Isi bensin"'),
+ o:["Cukup","Isi bensin","Cukup Isi bensin","Tidak ada keluaran"],
+ e:"20 >= 20 benar karena operator >= juga mencakup nilai yang sama."},
+{s:1,q:"Kondisi yang tepat untuk memeriksa apakah x berada di antara 10 dan 20 (termasuk 10 dan 20) adalah …",
+ o:["x >= 10 DAN x <= 20","x >= 10 ATAU x <= 20","x > 10 DAN x < 20","x <= 10 DAN x >= 20"],
+ e:"Kedua batas harus terpenuhi sekaligus, jadi dipakai DAN dengan >= dan <=."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("a ← 5","b ← 8","jika a > b maka","   tampilkan a","jika tidak","   tampilkan b"),
+ o:["8","5","13","3"],
+ e:"5 > 8 salah, sehingga cabang jika tidak menampilkan b, yaitu 8. Algoritma ini mencari nilai terbesar."},
+{s:1,q:"Hasil dari ekspresi: benar DAN salah adalah …",
+ o:["salah","benar","tergantung komputer","error"],
+ e:"DAN hanya bernilai benar jika kedua sisi benar."},
+{s:1,q:"Hasil dari ekspresi: benar ATAU salah adalah …",
+ o:["benar","salah","tergantung komputer","error"],
+ e:"ATAU bernilai benar jika paling sedikit satu sisi benar."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("kecepatan ← 60",'jika kecepatan > 100 maka tampilkan "Denda"','jika tidak, jika kecepatan > 80 maka tampilkan "Peringatan"','jika tidak tampilkan "Aman"'),
+ o:["Aman","Denda","Peringatan","Peringatan Aman"],
+ e:"60 > 100 salah dan 60 > 80 juga salah, sehingga jatuh ke cabang terakhir: Aman."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("n ← 9","jika n mod 3 = 0 maka",'   tampilkan "Kelipatan 3"',"jika tidak",'   tampilkan "Bukan"'),
+ o:["Kelipatan 3","Bukan","Kelipatan 3 Bukan","3"],
+ e:"9 mod 3 = 0 (tidak ada sisa), jadi 9 adalah kelipatan 3."},
+{s:1,q:"Sebuah mobil boleh masuk garasi jika tingginya < 2 meter. Tinggi mobil tepat 2 meter. Hasil kondisi tersebut adalah …",
+ o:["salah, karena 2 tidak lebih kecil dari 2","benar, karena 2 sama dengan 2","benar, karena 2 mendekati 2","tidak dapat ditentukan"],
+ e:"Operator < tidak mencakup nilai yang sama. Agar 2 meter lolos, kondisinya harus <= 2."},
+{s:1,q:"Apa keluaran algoritma berikut?",
+ c:L("x ← 4","y ← 9","jika x > 5 ATAU y > 8 maka",'   tampilkan "Lolos"',"jika tidak",'   tampilkan "Gagal"'),
+ o:["Lolos","Gagal","Lolos Gagal","Tidak ada keluaran"],
+ e:"x > 5 salah, tetapi y > 8 benar. Karena memakai ATAU, kondisi keseluruhan benar."},
+
+/* ---------- Soal tambahan: Perulangan ---------- */
+{s:2,q:"Berapa kali kata Pit stop ditampilkan?",
+ c:L("untuk i ← 1 sampai 5","   jika i = 3 maka",'      tampilkan "Pit stop"'),
+ o:["1 kali","3 kali","5 kali","0 kali"],
+ e:"Perulangan berjalan 5 kali, tetapi kondisi i = 3 hanya benar satu kali."},
+{s:2,q:"Apa keluaran algoritma berikut?",
+ c:L("n ← 5","selama n > 0","   tampilkan n","   n ← n - 2"),
+ o:["5 3 1","5 3 1 -1","5 4 3 2 1","5 2"],
+ e:"n berubah 5 → 3 → 1 → −1. Saat n = −1 kondisi salah, jadi yang tampil hanya 5, 3, 1."},
+{s:2,q:"Berapa nilai total yang ditampilkan?",
+ c:L("total ← 0","untuk i ← 1 sampai 10 selangkah 3","   total ← total + i","tampilkan total"),
+ o:["22","55","12","18"],
+ e:"i bernilai 1, 4, 7, 10. Jumlahnya 1 + 4 + 7 + 10 = 22."},
+{s:2,q:"Pada perulangan selama, apa yang akhirnya membuat perulangan berhenti?",
+ o:["Nilai variabel berubah sehingga kondisi menjadi salah","Kata kunci tampilkan","Nama variabel yang dipakai","Komentar di dalam program"],
+ e:"Isi perulangan harus mengubah sesuatu yang diperiksa kondisi, agar suatu saat kondisi bernilai salah."},
+{s:2,q:"Apa keluaran algoritma berikut?",
+ c:L("i ← 1","ulangi","   tampilkan i","   i ← i + 1","sampai i > 3"),
+ o:["1 2 3","1 2 3 4","2 3","1"],
+ e:"i = 1, 2, 3 ditampilkan. Setelah i menjadi 4, kondisi i > 3 benar dan perulangan berhenti."},
+{s:2,q:"Perulangan yang jumlah putarannya sudah diketahui sejak awal paling cocok memakai …",
+ o:["untuk (for)","jika (if)","tampilkan","deklarasi variabel"],
+ e:"Perulangan untuk (for) cocok bila jumlah putaran sudah pasti, misalnya 5 putaran."},
+{s:2,q:"Berapa nilai n yang ditampilkan?",
+ c:L("jumlah ← 0","n ← 1","selama jumlah < 10","   jumlah ← jumlah + n","   n ← n + 1","tampilkan n"),
+ o:["5","4","10","6"],
+ e:"jumlah menjadi 1, 3, 6, 10. Saat jumlah = 10 perulangan berhenti, dan n sudah bernilai 5."},
+{s:2,q:"Berapa kali tanda * ditampilkan?",
+ c:L("untuk a ← 1 sampai 4","   untuk b ← 1 sampai a",'      tampilkan "*"'),
+ o:["10","16","8","4"],
+ e:"Perulangan dalam berjalan sebanyak a kali: 1 + 2 + 3 + 4 = 10."},
+{s:2,q:"Apa keluaran algoritma berikut?",
+ c:L("putaran ← 0","selama putaran < 3","   putaran ← putaran + 1",'   tampilkan "Lap " + putaran'),
+ o:["Lap 1, Lap 2, Lap 3","Lap 0, Lap 1, Lap 2","Lap 1, Lap 2","Lap 3"],
+ e:"putaran ditambah 1 lebih dulu, baru ditampilkan: Lap 1, Lap 2, Lap 3."},
+{s:2,q:"Mobil melaju sampai bensin habis, dan jumlah putaran tidak diketahui di awal. Struktur yang paling tepat adalah …",
+ o:["selama bensin > 0 (perulangan berdasarkan kondisi)","untuk i ← 1 sampai 5","jika bensin = 0","tampilkan bensin"],
+ e:"Jumlah putaran tidak pasti, jadi dipakai perulangan yang berhenti berdasarkan kondisi (while)."}
+];
+
+/* ---------- Pengaturan ---------- */
+const TOTAL_MS = 90*60*1000;   // waktu total 90 menit
+const Q_SEC = 60;              // 1 menit per soal
+const N_QUESTIONS = 50;
+const PENALTY = 0.5;            // tabrak mobil atau lubang = skor berkurang 0,5
+const POINTS = 2;              // tiap jawaban benar = 2 poin (50 soal = skor maks 100)
+const SECTOR_COUNTS = [17,17,16];
+const KEY_BOARD = "sirkuit-devi-board-v2";
+const KEY_LOCK = "sirkuit-devi-kunci-v1";
+const TEACHER_PIN = "guru2026";   // GANTI PIN INI sebelum dibagikan ke siswa
+
+const W=400, H=500, CAR_Y=392, ROAD_L=70, ROAD_R=330;
+const LANE_W=(ROAD_R-ROAD_L)/3;
+const LANE_X=[0,1,2].map(i=>ROAD_L+LANE_W*(i+.5));
+const SPACING=1900, FIN_EXTRA=1300, CRUISE=340, BOOST=560, STOP_GAP=96;
+const TCOL=["#16a394","#1f6fd1","#f2b01e","#8e44ad","#e67e22","#2c3e50"];
+const RM = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Utilitas ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const hi = code => esc(code).replace(/\b(jika tidak|jika|maka|selama|untuk|sampai|ulangi|turun|selangkah|DAN|ATAU|tampilkan|mod)\b/g,'<span class="kw">$1</span>');
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const mem = {};
+const store = {
+  get(k){try{const v=localStorage.getItem(k); if(v!==null) return v;}catch(e){} return Object.prototype.hasOwnProperty.call(mem,k)?mem[k]:null;},
+  set(k,v){mem[k]=String(v); try{localStorage.setItem(k,v);}catch(e){}},
+  del(k){delete mem[k]; try{localStorage.removeItem(k);}catch(e){}}
+};
+const fmt = s => String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmtScore = v => String(Math.round(v*10)/10).replace(".",",");
+
+const screens={start:$("start"),game:$("game"),result:$("result")};
+function fit(){
+  const vh=window.innerHeight||document.documentElement.clientHeight;
+  const vw=document.documentElement.clientWidth||window.innerWidth;
+  const qw=$("qwrap"); if(qw) qw.style.maxHeight=Math.max(200,vh-24)+"px";
+  if(screens.game.hidden) return;
+  const hud=document.querySelector(".hud"), pad=document.querySelector(".pad"), st=document.querySelector(".stage");
+  const availH=vh-hud.offsetHeight-pad.offsetHeight-34;
+  let w=Math.min(420,vw-16,Math.floor(availH*W/H));
+  st.style.width=Math.max(180,w)+"px";
+}
+function show(name){
+  Object.keys(screens).forEach(k=>screens[k].hidden=(k!==name));
+  document.body.className=(name==="game"?"playing":"");
+  window.scrollTo(0,0);
+  fit();
+}
+window.addEventListener("resize",fit);
+window.addEventListener("orientationchange",function(){setTimeout(fit,250);});
+
+/* ---------- Kunci satu kali main ---------- */
+function getLock(){try{return JSON.parse(store.get(KEY_LOCK)||"null");}catch(e){return null;}}
+function applyLock(){
+  const l=getLock(), box=$("lockMsg");
+  $("btnStart").disabled=!!l; $("nama").disabled=!!l;
+  if(!l){ box.hidden=true; return; }
+  box.hidden=false;
+  box.textContent=l.done
+    ? "Kamu ("+l.n+") sudah menyelesaikan balapan di perangkat ini. Balapan hanya bisa diikuti satu kali."
+    : "Balapan atas nama "+l.n+" sudah pernah dimulai di perangkat ini dan tidak bisa diulang. Hubungi gurumu jika ada kendala.";
+}
+function askPin(msg,done){
+  const box=$("pinBox"); $("pinMsg").textContent=msg; $("pinIn").value=""; $("pinErr").hidden=true;
+  box.style.display="flex"; $("pinIn").focus();
+  function close(){box.style.display="none"; $("pinOk").onclick=null; $("pinNo").onclick=null;}
+  $("pinNo").onclick=close;
+  $("pinOk").onclick=function(){ if($("pinIn").value!==TEACHER_PIN){$("pinErr").hidden=false; return;} close(); done(); };
+}
+$("btnTeacher").addEventListener("click",e=>{
+  e.preventDefault();
+  askPin("Masukkan PIN guru untuk membuka kunci perangkat ini:",()=>{ store.del(KEY_LOCK); applyLock(); });
+});
+
+/* ---------- Papan skor ---------- */
+function loadBoard(){try{const a=JSON.parse(store.get(KEY_BOARD)||"[]");return Array.isArray(a)?a:[];}catch(e){return [];}}
+function saveBoard(a){store.set(KEY_BOARD,JSON.stringify(a));}
+function renderBoard(box,card,markId){
+  const list=loadBoard();
+  box.innerHTML="";
+  card.hidden=list.length===0;
+  if(!list.length) return;
+  const t=document.createElement("table"); t.className="board";
+  const head=document.createElement("tr");
+  [["#","n"],["Nama",""],["Skor","n"],["Benar","n"],["Waktu","n"]].forEach(([h,c])=>{
+    const th=document.createElement("th"); th.textContent=h; if(c) th.className=c; head.appendChild(th);
+  });
+  const thead=document.createElement("thead"); thead.appendChild(head); t.appendChild(thead);
+  const tb=document.createElement("tbody");
+  list.forEach((r,i)=>{
+    const tr=document.createElement("tr"); if(markId&&r.id===markId) tr.className="me";
+    const cells=[[i+1,"n"],[r.n,""],[fmtScore(r.s),"n"],[r.v,"n"],[fmt(r.t),"n"]];
+    cells.forEach(([v,c])=>{const td=document.createElement("td"); td.textContent=v; if(c) td.className=c; tr.appendChild(td);});
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb); box.appendChild(t);
+}
+
+/* ---------- Kanvas ---------- */
+const cv=$("cv"), ctx=cv.getContext("2d");
+let DPR=Math.min(window.devicePixelRatio||1,1.5);
+let LOW=false;
+try{ if(navigator.deviceMemory&&navigator.deviceMemory<=2){LOW=true;DPR=1;} }catch(e){}
+function sizeCanvas(){cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);}
+sizeCanvas();
+
+const TREES=[];
+for(let i=0;i<10;i++){
+  TREES.push({side:0,x:8+((i*37)%44),r:13+(i*7)%8,i});
+  TREES.push({side:1,x:W-8-((i*53)%44),r:13+(i*5)%8,i});
+}
+
+function rr(x,y,w,h,r){ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h);}
+
+function shade(hex,amt){
+  const n=parseInt(hex.slice(1),16);
+  const r=clamp((n>>16)+amt,0,255), g=clamp(((n>>8)&255)+amt,0,255), b=clamp((n&255)+amt,0,255);
+  return "rgb("+r+","+g+","+b+")";
+}
+function carShadow(w,l){ctx.fillStyle="rgba(0,0,0,.32)"; rr(-w/2+3,-l/2+5,w,l,10); ctx.fill();}
+
+/* Mobil pemain: gaya mobil balap formula */
+function drawRacer(x,y,color,rot,flame){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot||0);
+  carShadow(40,70);
+  if(flame>0){
+    const fl=30+Math.random()*22;
+    const gr=ctx.createLinearGradient(0,32,0,32+fl);
+    gr.addColorStop(0,"#bfe8ff"); gr.addColorStop(.25,"#fff1b0"); gr.addColorStop(.6,"#ff7a1a"); gr.addColorStop(1,"rgba(255,80,20,0)");
+    ctx.fillStyle=gr;
+    for(const ox of [-6,6]){ctx.beginPath(); ctx.moveTo(ox-4,32); ctx.lineTo(ox,32+fl); ctx.lineTo(ox+4,32); ctx.closePath(); ctx.fill();}
+  }
+  const tire=(tx,ty,tw,th)=>{
+    rr(tx,ty,tw,th,3); ctx.fillStyle="#0e1014"; ctx.fill();
+    ctx.fillStyle="#2a2e38"; ctx.fillRect(tx+1,ty+th*.3,tw-2,2); ctx.fillRect(tx+1,ty+th*.62,tw-2,2);
+  };
+  tire(-23,-26,9,17); tire(14,-26,9,17); tire(-24,12,10,21); tire(14,12,10,21);
+  ctx.fillStyle="#1b1e26"; ctx.fillRect(-15,-19,30,3); ctx.fillRect(-14,20,28,3);
+  // sayap depan
+  rr(-21,-37,42,7,3); ctx.fillStyle="#15171c"; ctx.fill();
+  ctx.fillStyle=color; ctx.fillRect(-21,-38,4,9); ctx.fillRect(17,-38,4,9);
+  ctx.fillStyle="#f7f7f4"; ctx.fillRect(-12,-36,24,2);
+  // bodi
+  ctx.save();
+  if(flame>0&&!LOW){ctx.shadowColor="rgba(255,140,40,.9)"; ctx.shadowBlur=16;}
+  ctx.beginPath(); ctx.moveTo(-4,-34); ctx.lineTo(4,-34); ctx.bezierCurveTo(8,-22,14,-12,14,0); ctx.lineTo(13,22); ctx.lineTo(-13,22); ctx.lineTo(-14,0); ctx.bezierCurveTo(-14,-12,-8,-22,-4,-34); ctx.closePath();
+  const bg=ctx.createLinearGradient(-14,0,14,0);
+  bg.addColorStop(0,shade(color,-40)); bg.addColorStop(.5,color); bg.addColorStop(1,shade(color,-40));
+  ctx.fillStyle=bg; ctx.fill();
+  ctx.restore();
+  ctx.fillStyle="rgba(0,0,0,.22)"; rr(-15,-2,5,26,2); ctx.fill(); rr(10,-2,5,26,2); ctx.fill();
+  // garis balap
+  ctx.fillStyle="rgba(255,255,255,.92)"; ctx.fillRect(-2.5,-34,5,52);
+  ctx.fillStyle="#ffbf1f"; ctx.fillRect(-4.5,-34,1.5,52); ctx.fillRect(3,-34,1.5,52);
+  // kokpit, helm, halo
+  ctx.fillStyle="#0b0d12"; ctx.beginPath(); ctx.ellipse(0,2,7,10,0,0,6.283); ctx.fill();
+  ctx.fillStyle="#ffbf1f"; ctx.beginPath(); ctx.arc(0,3,4.2,0,6.283); ctx.fill();
+  ctx.fillStyle="#111"; ctx.fillRect(-3.5,.5,7,2.2);
+  ctx.strokeStyle="#cfd3da"; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(-6,-3); ctx.quadraticCurveTo(0,-9,6,-3); ctx.stroke();
+  ctx.fillStyle="#0b0d12"; rr(-3.5,10,7,9,2); ctx.fill();
+  ctx.fillStyle="#15171c"; ctx.font="700 9px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("7",0,-21);
+  // sayap belakang
+  rr(-19,24,38,8,2); ctx.fillStyle="#15171c"; ctx.fill();
+  ctx.fillStyle=color; ctx.fillRect(-20,22,4,13); ctx.fillRect(16,22,4,13);
+  ctx.fillStyle="#f7f7f4"; ctx.fillRect(-14,26,28,1.5);
+  ctx.fillStyle=flame>0?"#ff9d3a":"#ff2a3d"; ctx.fillRect(-3,32,6,2.5);
+  ctx.restore();
+}
+
+/* Mobil lalu lintas: sedan dan van */
+function drawTraffic(x,y,color,kind){
+  const Ln=kind?72:60, Wd=kind?34:32;
+  ctx.save(); ctx.translate(x,y); ctx.scale(.92,.92);
+  carShadow(Wd,Ln);
+  ctx.fillStyle="#0e1014";
+  [[-Wd/2-2,-Ln/2+8],[Wd/2-3,-Ln/2+8],[-Wd/2-2,Ln/2-22],[Wd/2-3,Ln/2-22]].forEach(q=>{rr(q[0],q[1],5,14,2); ctx.fill();});
+  rr(-Wd/2,-Ln/2,Wd,Ln,kind?6:9);
+  const bg=ctx.createLinearGradient(-Wd/2,0,Wd/2,0);
+  bg.addColorStop(0,shade(color,-35)); bg.addColorStop(.5,color); bg.addColorStop(1,shade(color,-35));
+  ctx.fillStyle=bg; ctx.fill();
+  if(kind){
+    rr(-Wd/2+3,-Ln/2+18,Wd-6,Ln-28,4); ctx.fillStyle=shade(color,28); ctx.fill();
+    ctx.fillStyle="#1b2230"; rr(-Wd/2+5,-Ln/2+6,Wd-10,11,3); ctx.fill();
+    ctx.fillStyle="rgba(255,255,255,.2)"; ctx.fillRect(-Wd/2+7,-Ln/2+8,6,3);
+  }else{
+    ctx.fillStyle="#1b2230"; ctx.beginPath(); ctx.moveTo(-11,-14); ctx.lineTo(11,-14); ctx.lineTo(9,-6); ctx.lineTo(-9,-6); ctx.closePath(); ctx.fill();
+    rr(-10,-6,20,17,4); ctx.fillStyle=shade(color,30); ctx.fill();
+    ctx.fillStyle="#1b2230"; ctx.beginPath(); ctx.moveTo(-9,11); ctx.lineTo(9,11); ctx.lineTo(11,17); ctx.lineTo(-11,17); ctx.closePath(); ctx.fill();
+  }
+  ctx.fillStyle="#fff3b0"; ctx.fillRect(-Wd/2+2,-Ln/2+1,6,3); ctx.fillRect(Wd/2-8,-Ln/2+1,6,3);
+  ctx.fillStyle="#ff2a3d"; ctx.fillRect(-Wd/2+2,Ln/2-4,6,3); ctx.fillRect(Wd/2-8,Ln/2-4,6,3);
+  ctx.restore();
+}
+
+/* Rintangan jalan */
+function drawRock(x,y,sd){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(sd*6.283);
+  ctx.fillStyle="rgba(0,0,0,.35)"; ctx.beginPath(); ctx.ellipse(4,5,25,19,0,0,6.283); ctx.fill();
+  const pts=[[-22,-4],[-14,-17],[2,-21],[18,-13],[24,3],[14,17],[-6,20],[-20,11]];
+  ctx.fillStyle="#6b7280"; ctx.beginPath();
+  pts.forEach((q,i)=>{if(i) ctx.lineTo(q[0],q[1]); else ctx.moveTo(q[0],q[1]);});
+  ctx.closePath(); ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle="#3b4049"; ctx.stroke();
+  ctx.fillStyle="#9aa1ad"; ctx.beginPath(); ctx.moveTo(-14,-10); ctx.lineTo(0,-15); ctx.lineTo(12,-8); ctx.lineTo(2,0); ctx.lineTo(-12,2); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle="#4b515c"; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(4,2); ctx.lineTo(10,12); ctx.moveTo(-8,6); ctx.lineTo(-14,14); ctx.stroke();
+  ctx.restore();
+}
+function drawHole(x,y){
+  ctx.save(); ctx.translate(x,y);
+  ctx.fillStyle="#1c1f27"; ctx.beginPath(); ctx.ellipse(0,0,32,17,0,0,6.283); ctx.fill();
+  ctx.strokeStyle="#464c5a"; ctx.lineWidth=2; ctx.beginPath(); ctx.ellipse(0,0,32,17,0,0,6.283); ctx.stroke();
+  const gr=ctx.createRadialGradient(0,2,2,0,2,26); gr.addColorStop(0,"#05060a"); gr.addColorStop(1,"#14161d");
+  ctx.fillStyle=gr; ctx.beginPath(); ctx.ellipse(0,1,26,12,0,0,6.283); ctx.fill();
+  ctx.strokeStyle="#3a3f4b"; ctx.lineWidth=1.5; ctx.beginPath();
+  ctx.moveTo(-30,-8); ctx.lineTo(-38,-14); ctx.moveTo(28,-9); ctx.lineTo(37,-17); ctx.moveTo(8,15); ctx.lineTo(12,23);
+  ctx.stroke();
+  ctx.restore();
+}
+function drawOil(x,y,sd){
+  ctx.save(); ctx.translate(x,y); ctx.rotate((sd-.5)*.6);
+  ctx.fillStyle="rgba(8,10,24,.88)";
+  ctx.beginPath(); ctx.ellipse(0,0,34,19,0,0,6.283); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(-16,-8,16,10,0,0,6.283); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(18,7,14,9,0,0,6.283); ctx.fill();
+  ctx.lineWidth=3;
+  ctx.strokeStyle="rgba(80,230,210,.55)"; ctx.beginPath(); ctx.ellipse(-4,-2,20,9,0,3.4,5.3); ctx.stroke();
+  ctx.strokeStyle="rgba(255,90,200,.5)"; ctx.beginPath(); ctx.ellipse(4,2,22,10,0,.2,2.2); ctx.stroke();
+  ctx.restore();
+}
+function drawCone(x,y){
+  ctx.save(); ctx.translate(x,y);
+  ctx.fillStyle="rgba(0,0,0,.3)"; rr(-11,-10,30,30,5); ctx.fill();
+  ctx.fillStyle="#d9480f"; rr(-14,-14,28,28,5); ctx.fill();
+  ctx.fillStyle="#ff7a1a"; ctx.beginPath(); ctx.arc(0,0,11,0,6.283); ctx.fill();
+  ctx.fillStyle="#f7f7f4"; ctx.beginPath(); ctx.arc(0,0,7,0,6.283); ctx.fill();
+  ctx.fillStyle="#ff7a1a"; ctx.beginPath(); ctx.arc(0,0,3.5,0,6.283); ctx.fill();
+  ctx.restore();
+}
+function drawHaz(h,y){
+  if(h.t==="rock") drawRock(h.x,y,h.sd);
+  else if(h.t==="hole") drawHole(h.x,y);
+  else if(h.t==="oil") drawOil(h.x,y,h.sd);
+  else drawCone(h.x,y);
+}
+
+function drawBarrier(o,y,k){
+  const x=ROAD_L-8, w=ROAD_R-ROAD_L+16, h=26;
+  ctx.save(); ctx.beginPath(); ctx.rect(x,y-h/2,w,h); ctx.clip();
+  ctx.fillStyle="#f7f7f4"; ctx.fillRect(x,y-h/2,w,h);
+  ctx.fillStyle="#d7263d";
+  for(let sx=x-h;sx<x+w;sx+=36){
+    ctx.beginPath(); ctx.moveTo(sx,y+h/2); ctx.lineTo(sx+h,y-h/2); ctx.lineTo(sx+h+18,y-h/2); ctx.lineTo(sx+18,y+h/2); ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+  ctx.strokeStyle="#1c2029"; ctx.lineWidth=3; ctx.strokeRect(x,y-h/2,w,h);
+  ctx.fillStyle="#1c2029"; ctx.fillRect(x+12,y+h/2,8,10); ctx.fillRect(x+w-20,y+h/2,8,10);
+  const sec=SECTORS[o.q.s], sw=150, sh=32, sx=W/2-sw/2, sy=y-h/2-sh-10;
+  ctx.fillStyle="#1c2029"; ctx.fillRect(W/2-3,y-h/2-10,6,10);
+  rr(sx,sy,sw,sh,8); ctx.fillStyle=sec.hex; ctx.fill(); ctx.lineWidth=3; ctx.strokeStyle="#fff"; ctx.stroke();
+  ctx.fillStyle=sec.ink; ctx.font="700 16px 'Atkinson Hyperlegible',system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText("SOAL "+(k+1)+" ?",W/2,sy+sh/2+1);
+}
+
+function drawChecker(y,h){
+  const sq=12, cols=Math.ceil((ROAD_R-ROAD_L)/sq);
+  for(let r=0;r<h/sq;r++)for(let c=0;c<cols;c++){
+    ctx.fillStyle=((r+c)%2)?"#15171c":"#f7f7f4";
+    ctx.fillRect(ROAD_L+c*sq,y+r*sq,Math.min(sq,ROAD_R-ROAD_L-c*sq),sq);
+  }
+}
+
+let G=null, raf=0, last=0;
+
+function draw(){
+  const g=G; if(!g) return;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.save();
+  if(g.shake>0&&!RM) ctx.translate((Math.random()-.5)*8*g.shake*2,(Math.random()-.5)*8*g.shake*2);
+  // rumput
+  ctx.fillStyle="#2f8f4e"; ctx.fillRect(-10,-10,W+20,H+20);
+  const off=g.dist%80;
+  ctx.fillStyle="#2a8447";
+  for(let y=-80+off;y<H;y+=80) ctx.fillRect(-10,y,W+20,40);
+  // pohon
+  for(const t of TREES){
+    const y=((t.i*70+g.dist)%700)-50;
+    ctx.fillStyle="#1d6a37"; ctx.beginPath(); ctx.arc(t.x,y,t.r,0,6.283); ctx.fill();
+    ctx.fillStyle="#26874a"; ctx.beginPath(); ctx.arc(t.x-3,y-3,t.r*.6,0,6.283); ctx.fill();
+  }
+  // aspal
+  ctx.fillStyle="#2b2f38"; ctx.fillRect(ROAD_L,-10,ROAD_R-ROAD_L,H+20);
+  // kerb
+  for(let y=-80+off;y<H;y+=80){
+    ctx.fillStyle="#d7263d"; ctx.fillRect(ROAD_L-10,y,10,40); ctx.fillRect(ROAD_R,y,10,40);
+    ctx.fillStyle="#f7f7f4"; ctx.fillRect(ROAD_L-10,y+40,10,40); ctx.fillRect(ROAD_R,y+40,10,40);
+  }
+  // garis jalur
+  ctx.fillStyle="#ffbf1f";
+  const lo=g.dist%72;
+  for(let y=-72+lo;y<H;y+=72){ ctx.fillRect(ROAD_L+LANE_W-2,y,4,36); ctx.fillRect(ROAD_L+LANE_W*2-2,y,4,36); }
+  // garis start dan finis
+  const sy=CAR_Y+g.dist+40;
+  if(sy<H+30){ ctx.fillStyle="#f7f7f4"; ctx.fillRect(ROAD_L,sy,ROAD_R-ROAD_L,8); }
+  const fy=CAR_Y-(g.finishD-g.dist);
+  if(fy>-60&&fy<H+40){
+    drawChecker(fy-12,24);
+    ctx.fillStyle="#1c2029"; ctx.fillRect(ROAD_L-12,fy-60,6,60); ctx.fillRect(ROAD_R+6,fy-60,6,60);
+    ctx.fillStyle="#d7263d"; ctx.fillRect(ROAD_L-12,fy-62,ROAD_R-ROAD_L+24,22);
+    ctx.fillStyle="#fff"; ctx.font="700 15px 'Atkinson Hyperlegible',sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText("FINIS",W/2,fy-51);
+  }
+  // rintangan jalan
+  for(const h of g.haz){
+    if(h.gone) continue;
+    const hy=CAR_Y-(h.d-g.dist);
+    if(hy<-45||hy>H+45) continue;
+    drawHaz(h,hy);
+  }
+  // rintangan
+  let obsY=null;
+  for(let k=0;k<g.obs.length;k++){
+    const o=g.obs[k]; if(o.burst) continue;
+    const y=CAR_Y-(o.d-g.dist);
+    if(obsY===null&&!o.res) obsY=y;
+    if(y>-90&&y<H+50) drawBarrier(o,y,k);
+  }
+  // lalu lintas
+  for(const t of g.traffic){
+    let a=1;
+    if(obsY!==null&&obsY>-60) a=clamp((t.y-obsY)/50,0,1);
+    if(a<=0) continue;
+    ctx.globalAlpha=a; drawTraffic(t.x,t.y,t.c,t.k||0); ctx.globalAlpha=1;
+  }
+  // mobil pemain
+  let rot=0;
+  if(g.crashT>0) rot=Math.sin(g.crashT*16)*.7*clamp(g.crashT,0,1);
+  else if(g.slipT>0) rot=Math.sin(g.slipT*14)*.6*clamp(g.slipT/1.4,.3,1);
+  else rot=clamp((LANE_X[g.lane]-g.x)/60,-.4,.4)*.5;
+  if(g.boostT>0&&!RM){
+    ctx.strokeStyle="rgba(255,255,255,.28)"; ctx.lineWidth=2;
+    for(let i=0;i<9;i++){const lx=ROAD_L+Math.random()*(ROAD_R-ROAD_L),ly=Math.random()*H; ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx,ly+30+Math.random()*40); ctx.stroke();}
+  }
+  drawRacer(g.x,CAR_Y,"#e11d2e",rot,g.boostT>0?1:0);
+  // partikel
+  for(const p of g.parts){
+    const a=clamp(p.life/p.max,0,1);
+    if(p.smoke){
+      ctx.fillStyle="rgba(225,225,225,"+(a*.55).toFixed(3)+")";
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.s*(1+(1-a)*2),0,6.283); ctx.fill();
+    }else{
+      ctx.globalAlpha=a; ctx.fillStyle=p.c; ctx.fillRect(p.x,p.y,p.s,p.s); ctx.globalAlpha=1;
+    }
+  }
+  // teks pengurangan skor di atas mobil
+  for(const p of g.pops){
+    const a=clamp(1-(p.age-.7)/.6,0,1), yy=CAR_Y-52-p.age*38;
+    ctx.globalAlpha=a; ctx.font="700 26px 'Atkinson Hyperlegible',system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.lineWidth=5; ctx.strokeStyle="#1c2029"; ctx.strokeText(p.txt,g.x,yy);
+    ctx.fillStyle="#ff5b6b"; ctx.fillText(p.txt,g.x,yy);
+    ctx.globalAlpha=1;
+  }
+  ctx.restore();
+  // lapisan HUD di kanvas
+  ctx.fillStyle="rgba(0,0,0,.35)"; ctx.fillRect(0,0,W,7);
+  ctx.fillStyle="#ffbf1f"; ctx.fillRect(0,0,W*clamp(g.dist/g.finishD,0,1),7);
+  const kmh=Math.round(g.speed/CRUISE*120);
+  rr(10,H-36,104,26,8); ctx.fillStyle="rgba(0,0,0,.6)"; ctx.fill();
+  ctx.fillStyle="#fff"; ctx.font="700 14px 'JetBrains Mono',ui-monospace,monospace"; ctx.textAlign="left"; ctx.textBaseline="middle";
+  ctx.fillText(String(kmh).padStart(3," ")+" km/j",18,H-22);
+}
+
+/* ---------- Partikel ---------- */
+function debris(x,y,color,n){
+  n=RM?Math.ceil(n/3):n;
+  for(let i=0;i<n;i++) G.parts.push({x,y,vx:(Math.random()-.5)*280,vy:(Math.random()-.9)*220,life:.7+Math.random()*.5,max:1.2,c:Array.isArray(color)?color[i%color.length]:color,s:3+Math.random()*4,w:1});
+}
+function smoke(x,y,n){
+  n=RM?Math.ceil(n/3):n;
+  for(let i=0;i<n;i++) G.parts.push({x:x+(Math.random()-.5)*30,y:y+(Math.random()-.5)*20,vx:(Math.random()-.5)*50,vy:-20-Math.random()*50,life:1+Math.random()*.6,max:1.6,s:8+Math.random()*8,smoke:true,w:1});
+}
+function stepParts(dt){
+  const g=G;
+  for(const p of g.parts){
+    p.x+=p.vx*dt; p.y+=p.vy*dt+(p.w?g.speed*dt:0);
+    if(!p.smoke) p.vy+=300*dt;
+    p.life-=dt;
+  }
+  g.parts=g.parts.filter(p=>p.life>0&&p.y<H+40);
+  g.pops.forEach(p=>{p.age+=dt;});
+  g.pops=g.pops.filter(p=>p.age<1.3);
+}
+
+/* ---------- Efek tulisan ---------- */
+let flashT=0;
+function flash(msg,cls){
+  const f=$("flash");
+  f.textContent=msg; f.className="flash "+(cls||"");
+  void f.offsetWidth; f.classList.add("on");
+  clearTimeout(flashT); flashT=setTimeout(()=>{f.classList.remove("on");},1300);
+}
+
+/* ---------- Mulai ---------- */
+function buildList(){
+  const out=[];
+  for(let s=0;s<3;s++) out.push(...shuffle(Q.filter(q=>q.s===s)).slice(0,SECTOR_COUNTS[s]));
+  return shuffle(out);   // urutan soal diacak, tiap siswa berbeda
+}
+function startGame(list,mode,name){
+  const N=list.length;
+  const g=G={
+    mode,name,list,N,answered:0,score:0,correct:0,streak:0,bestStreak:0,wrongs:[],sec:[[0,0],[0,0],[0,0]],
+    obs:list.map((q,k)=>({d:SPACING*(k+1),q,res:null,burst:false})),
+    dist:0,speed:0,lane:1,x:LANE_X[1],state:"run",haz:genHazards(N),slipT:0,pops:[],hits:0,penalty:0,traffic:[],parts:[],spawnT:1.5,crashT:0,boostT:0,shake:0,
+    finishD:SPACING*N+FIN_EXTRA,endT:0,t0:Date.now(),tEnd:0,deadline:Date.now()+TOTAL_MS,
+    locked:false,cur:null,opts:[],qEnd:0,lastPts:0,finished:false
+  };
+  $("hName").textContent=name;
+  $("qTot").textContent=N;
+  $("qmodal").hidden=true;
+  updateHud();
+  show("game");
+  cancelAnimationFrame(raf);
+  last=performance.now();
+  raf=requestAnimationFrame(frame);
+  flash("Siap, "+name+"!","good");
+}
+
+/* ---------- Loop ---------- */
+let fAcc=0,fN=0;
+function frame(ts){
+  raf=requestAnimationFrame(frame);
+  const g=G; if(!g||g.finished) return;
+  const raw=Math.max(0,(ts-last)/1000);
+  const dt=Math.min(.05,raw); last=ts;
+  update(dt);
+  if(g.state==="question") { fAcc=0; fN=0; return; }   // soal tampil: tidak perlu menggambar ulang
+  draw();
+  if(!LOW && raw<.25){            // HP lambat: otomatis turunkan kualitas
+    fAcc+=raw; fN++;
+    if(fN>=45){ if(fAcc/fN>.034){LOW=true; DPR=1; sizeCanvas();} fAcc=0; fN=0; }
+  }
+}
+
+function update(dt){
+  const g=G;
+  g.shake=Math.max(0,g.shake-dt);
+  g.boostT=Math.max(0,g.boostT-dt);
+  g.slipT=Math.max(0,g.slipT-dt);
+  g.x+=(LANE_X[g.lane]-g.x)*Math.min(1,dt*9);
+  stepParts(dt);
+  if(g.state==="question") return;
+  if(g.state==="done"){
+    g.speed+=(0-g.speed)*Math.min(1,dt*2.2);
+    g.dist+=g.speed*dt;
+    g.endT+=dt;
+    if(g.endT>2.4&&!g.finished) finish("done");
+    return;
+  }
+  let pend=null,next=null;
+  for(const o of g.obs){
+    if(o.res&&!o.burst&&!pend) pend=o;
+    if(!o.res&&!next) next=o;
+  }
+  let target=CRUISE, stopD=null;
+  if(pend) target=pend.res==="ok"?BOOST:170;
+  else if(next){
+    stopD=next.d-STOP_GAP;
+    const r=stopD-g.dist;
+    if(r<300) target=Math.max(45,r*1.5);
+  }
+  if(g.crashT>0){ g.crashT-=dt; g.speed=0; }
+  else g.speed+=(target-g.speed)*Math.min(1,dt*(target<g.speed?6:3.5));
+  let adv=g.speed*dt;
+  if(stopD!==null) adv=Math.min(adv,Math.max(0,stopD-g.dist));
+  g.dist+=adv;
+
+  if(pend&&pend.d-g.dist<50){
+    pend.burst=true;
+    const bx=ROAD_L+(ROAD_R-ROAD_L)/2, by=CAR_Y-(pend.d-g.dist);
+    for(let i=0;i<((RM||LOW)?10:34);i++) g.parts.push({x:ROAD_L+Math.random()*(ROAD_R-ROAD_L),y:by+(Math.random()-.5)*20,vx:(Math.random()-.5)*320,vy:(Math.random()-1)*260,life:.8+Math.random()*.6,max:1.4,c:i%2?"#d7263d":"#f7f7f4",s:4+Math.random()*6,w:1});
+    if(pend.res==="bad"){
+      g.crashT=1.1; g.speed=0; g.shake=.5;
+      smoke(g.x,CAR_Y-30,14);
+      flash("Tabrakan!","bad");
+    }else{
+      g.shake=.25;
+    }
+    return;
+  }
+  if(!pend&&next&&stopD-g.dist<=0.5){
+    g.dist=stopD; g.speed=0;
+    openQuestion(next);
+    return;
+  }
+  stepHazards();
+  stepTraffic(dt,next);
+  if(!next&&!pend&&g.dist>=g.finishD){
+    g.state="done"; g.endT=0; g.traffic=[];
+    flash("FINIS!","good");
+  }
+}
+
+function stepTraffic(dt,next){
+  const g=G;
+  g.spawnT-=dt;
+  const far=next?next.d-g.dist:9999;
+  if(g.spawnT<=0){
+    g.spawnT=.55+Math.random()*.6;
+    if(far>650&&g.speed>120&&g.crashT<=0&&g.finishD-g.dist>700){
+      // gelombang 1-2 mobil, selalu menyisakan minimal satu jalur kosong
+      const lanes=shuffle([0,1,2]);
+      const cnt=Math.random()<.45?2:1;
+      for(let k=0;k<cnt;k++){
+        const ln=lanes[k];
+        if(g.traffic.some(t=>t.x===LANE_X[ln]&&t.y<130)) continue;
+        g.traffic.push({x:LANE_X[ln],y:-90-k*(20+Math.random()*50),v:110+Math.random()*150,c:TCOL[Math.floor(Math.random()*TCOL.length)],k:Math.random()<.25?1:0});
+      }
+    }
+  }
+  for(let i=g.traffic.length-1;i>=0;i--){
+    const t=g.traffic[i];
+    t.y+=(g.speed-t.v)*dt;
+    if(t.y>H+90||t.y<-130){g.traffic.splice(i,1);continue;}
+    if(g.crashT<=0&&Math.abs(t.x-g.x)<34&&Math.abs(t.y-CAR_Y)<58){
+      g.speed=0; g.crashT=.8; g.shake=.45;
+      debris(t.x,t.y,t.c,16);
+      smoke(g.x,CAR_Y-30,8);
+      flash("Tabrak mobil!","bad");
+      penalize();
+      g.traffic.splice(i,1);
+    }
+  }
+}
+
+/* ---------- Pengurangan skor ---------- */
+function penalize(){
+  const g=G;
+  g.hits++;
+  g.score=Math.round((g.score-PENALTY)*10)/10;       // selama balapan boleh di bawah 0
+  g.penalty=Math.round((g.penalty+PENALTY)*10)/10;
+  g.pops.push({txt:"-"+fmtScore(PENALTY),age:0});
+  updateHud();
+}
+
+/* ---------- Rintangan jalan ---------- */
+function pickHaz(){
+  const r=Math.random();
+  return r<.28?"rock":r<.56?"hole":r<.76?"oil":"cone";
+}
+function genHazards(N){
+  const hz=[];
+  const finishD=SPACING*N+FIN_EXTRA;
+  for(let k=0;k<=N;k++){
+    const start=(k===0)?450:SPACING*k+280;
+    const end=(k<N)?SPACING*(k+1)-STOP_GAP-420:finishD-250;
+    let d=start+Math.random()*100;
+    while(d<end){
+      const cnt=Math.random()<.35?2:1;   // minimal satu jalur selalu kosong
+      const lanes=shuffle([0,1,2]);
+      for(let j=0;j<cnt;j++) hz.push({d:d+j*10,x:LANE_X[lanes[j]],t:pickHaz(),hit:false,gone:false,sd:Math.random()});
+      d+=220+Math.random()*120;
+    }
+  }
+  return hz;
+}
+function stepHazards(){
+  const g=G;
+  if(g.crashT>0) return;
+  for(const h of g.haz){
+    if(h.hit||h.gone) continue;
+    const y=CAR_Y-(h.d-g.dist);
+    if(y<CAR_Y-45||y>CAR_Y+45) continue;
+    const hw=h.t==="cone"?26:32;
+    if(Math.abs(h.x-g.x)>=hw) continue;
+    h.hit=true;
+    if(h.t==="rock"){
+      h.gone=true; g.speed=0; g.crashT=.9; g.shake=.5;
+      debris(h.x,y,["#6b7280","#9aa1ad","#4b515c"],18); smoke(g.x,CAR_Y-30,10);
+      flash("Menabrak batu!","bad");
+    }else if(h.t==="hole"){
+      g.speed*=.25; g.shake=.4;
+      debris(h.x,y,["#3a3f4b","#14161d"],10);
+      flash("Jalan berlubang!","bad");
+      penalize();
+    }else if(h.t==="oil"){
+      g.slipT=1.4; g.speed*=.7; g.shake=.15;
+      g.lane=clamp(g.lane+(Math.random()<.5?-1:1),0,2);
+      flash("Licin! Mobil selip","bad");
+    }else{
+      h.gone=true; g.speed*=.35; g.shake=.25;
+      debris(h.x,y,["#ff7a1a","#f7f7f4"],12);
+      flash("Kena kerucut!","bad");
+    }
+  }
+}
+
+/* ---------- Kemudi ---------- */
+function steer(d){
+  const g=G;
+  if(!g||g.finished||g.state!=="run"||g.crashT>0||g.slipT>0) return;
+  g.lane=clamp(g.lane+d,0,2);
+}
+function bindHold(id,d){
+  const b=$(id); let tAt=0;
+  b.addEventListener("touchstart",e=>{e.preventDefault();tAt=Date.now();steer(d);},{passive:false});
+  b.addEventListener("mousedown",e=>{if(Date.now()-tAt<700) return; e.preventDefault();steer(d);});
+  b.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();steer(d);}});
+}
+bindHold("btnL",-1); bindHold("btnR",1);
+(function(){   // geser jari atau ketuk sisi kiri/kanan lintasan
+  const st=document.querySelector(".stage"); let sx=null;
+  st.addEventListener("touchstart",e=>{e.preventDefault(); sx=e.changedTouches[0].clientX;},{passive:false});
+  st.addEventListener("touchend",e=>{
+    if(sx===null) return; e.preventDefault();
+    const x=e.changedTouches[0].clientX, dx=x-sx; sx=null;
+    if(Math.abs(dx)>28) steer(dx>0?1:-1);
+    else{ const r=st.getBoundingClientRect(); steer(x<r.left+r.width/2?-1:1); }
+  },{passive:false});
+})();
+
+/* ---------- HUD & timer ---------- */
+function updateHud(){
+  const g=G; if(!g) return;
+  $("hScore").textContent=fmtScore(g.score);
+  $("hStreak").textContent=g.streak;
+  $("hObs").textContent=Math.min(g.answered+1,g.N)+"/"+g.N;
+}
+function tick(){
+  const g=G; if(!g||g.finished) return;
+  const left=Math.max(0,g.deadline-Date.now());
+  $("hTime").textContent=fmt(Math.ceil(left/1000));
+  $("hTimeWrap").classList.toggle("low",left<5*60000);
+  if(left<=0){finish("time");return;}
+  if(g.state==="question"&&!g.locked){
+    const ql=Math.max(0,g.qEnd-Date.now());
+    $("tm").textContent=fmt(Math.ceil(ql/1000));
+    $("tbar").style.width=(ql/(Q_SEC*1000)*100)+"%";
+    const low=ql<15000;
+    $("tbarWrap").classList.toggle("low",low);
+    $("tmWrap").classList.toggle("low",low);
+    if(ql<=0) choose(-1);
+  }
+}
+setInterval(tick,250);
+
+/* ---------- Soal ---------- */
+function openQuestion(o){
+  const g=G, q=o.q, sec=SECTORS[q.s];
+  fit();
+  g.state="question"; g.cur=o; g.locked=false;
+  const m=$("qmodal");
+  m.style.setProperty("--sec",sec.css);
+  m.style.setProperty("--sec-ink",sec.ink);
+  $("signName").textContent="Sektor "+(q.s+1)+": "+sec.name;
+  $("qNo").textContent=g.answered+1;
+  $("qtext").textContent=q.q;
+  const code=$("qcode");
+  if(q.c){code.hidden=false;code.innerHTML=hi(q.c);}else{code.hidden=true;code.textContent="";}
+  g.opts=shuffle(q.o.map((t,k)=>({t,ok:k===0})));
+  const box=$("opts"); box.innerHTML="";
+  g.opts.forEach((o2,i)=>{
+    const b=document.createElement("button");
+    b.type="button"; b.className="opt";
+    b.innerHTML='<span class="ltr"></span><span class="otx"></span><span class="mark" aria-hidden="true"></span><span class="sr"></span>';
+    b.children[0].textContent="ABCD"[i];
+    b.children[1].textContent=o2.t;
+    b.addEventListener("click",()=>choose(i));
+    box.appendChild(b);
+  });
+  $("fb").hidden=true;
+  g.qEnd=Date.now()+Q_SEC*1000;
+  $("tm").textContent=fmt(Q_SEC);
+  $("tbar").style.width="100%";
+  $("tbarWrap").classList.remove("low"); $("tmWrap").classList.remove("low");
+  m.hidden=false;
+  $("qwrap").scrollTop=0;
+  $("qwrap").focus({preventScroll:true});
+}
+
+function choose(i){
+  const g=G;
+  if(!g||g.state!=="question"||g.locked) return;
+  g.locked=true;
+  const o=g.cur, q=o.q;
+  const pick=(i>=0?g.opts[i]:{t:"(waktu habis)",ok:false}), ok=pick.ok;
+  g.sec[q.s][1]++;
+  g.answered++;
+  if(g.answered===g.N) g.tEnd=Date.now();
+  const btns=Array.prototype.slice.call($("opts").children);
+  btns.forEach((b,k)=>{
+    b.disabled=true;
+    const op=g.opts[k];
+    if(op.ok){b.classList.add("correct");b.querySelector(".mark").textContent="✓";b.querySelector(".sr").textContent=" (jawaban benar)";}
+    else if(k===i){b.classList.add("wrong");b.querySelector(".mark").textContent="✕";b.querySelector(".sr").textContent=" (jawabanmu, salah)";}
+    else b.classList.add("dim");
+  });
+  let verdict;
+  if(ok){
+    g.correct++; g.sec[q.s][0]++; g.streak++;
+    g.bestStreak=Math.max(g.bestStreak,g.streak);
+    g.lastPts=POINTS; g.score+=g.lastPts;
+    o.res="ok";
+    verdict="Benar! Skor +"+g.lastPts+(g.streak>1?" (beruntun "+g.streak+")":"");
+  }else{
+    g.streak=0; g.lastPts=0;
+    o.res="bad";
+    g.wrongs.push({q,picked:pick.t,right:q.o[0]});
+    verdict=(i<0?"Waktu habis! ":"Salah! ")+"Jawaban benar: "+q.o[0];
+  }
+  updateHud();
+  const fb=$("fb");
+  fb.className="feedback "+(ok?"ok":"no");
+  $("verdict").textContent=verdict;
+  $("expl").textContent=q.e;
+  $("btnNext").textContent=(g.answered>=g.N)?"Lanjut ke garis finis":"Lanjut";
+  fb.hidden=false;
+  $("btnNext").focus({preventScroll:true});
+  fb.scrollIntoView({block:"nearest"});
+}
+
+function next(){
+  const g=G;
+  if(!g||g.state!=="question"||!g.locked) return;
+  $("qmodal").hidden=true;
+  g.state="run";
+  if(g.cur.res==="ok"){
+    g.speed=Math.max(g.speed,260); g.boostT=1.6;
+    flash("Nitro! +"+g.lastPts,"good");
+  }
+}
+
+/* ---------- Hasil ---------- */
+function finish(reason){
+  const g=G;
+  if(!g||g.finished) return;
+  g.finished=true;
+  cancelAnimationFrame(raf);
+  $("qmodal").hidden=true;
+  const N=g.N, c=g.correct;
+  const final=Math.max(0,g.score);   // skor akhir minimal 0
+  if(reason==="time"){
+    g.obs.forEach(o=>{
+      if(!o.res){ g.sec[o.q.s][1]++; g.wrongs.push({q:o.q,picked:"(belum dikerjakan)",right:o.q.o[0]}); }
+    });
+  }
+  const pct=Math.round(c/N*100);
+  const secs=Math.round(((g.tEnd||Date.now())-g.t0)/1000);
+  let title;
+  if(pct>=90) title="Gelar: Juara Dunia";
+  else if(pct>=75) title="Gelar: Pembalap Profesional";
+  else if(pct>=60) title="Gelar: Pembalap Turnamen";
+  else title="Gelar: Pembalap Pemula. Latihan lagi di pit stop, kamu pasti bisa lebih cepat.";
+
+  $("rHead").textContent=reason==="time"?"Waktu 90 menit habis. Soal yang belum dikerjakan dihitung salah.":"Garis finis tercapai!";
+  $("rName").textContent=g.name;
+  $("rTitle").textContent=title;
+  $("rScore").textContent=fmtScore(final);
+  $("rPenalty").textContent=g.hits?("Menabrak mobil atau lubang "+g.hits+" kali, pengurangan skor "+fmtScore(g.penalty)+" poin."+(g.score<0?" Skor akhir tidak bisa kurang dari 0.":"")):"Tidak pernah menabrak mobil atau lubang.";
+  $("rSalah").textContent=(N-c);
+  $("rCorrect").textContent=c+"/"+N;
+  $("rTime").textContent=fmt(secs);
+
+  const sbox=$("rSectors"); sbox.innerHTML="";
+  g.sec.forEach((v,s)=>{
+    if(!v[1]) return;
+    const row=document.createElement("div"); row.className="secrow";
+    const pct=Math.round(v[0]/v[1]*100);
+    row.innerHTML='<span></span><div class="bar"><i></i></div><output></output>';
+    row.children[0].textContent=SECTORS[s].name;
+    const bar=row.querySelector("i"); bar.style.width=pct+"%"; bar.style.background=SECTORS[s].hex;
+    row.children[2].textContent=v[0]+"/"+v[1];
+    sbox.appendChild(row);
+  });
+
+  let markId=null;
+  if(g.mode==="full"){
+    markId=String(Date.now())+Math.random().toString(36).slice(2,6);
+    const lk=getLock(); if(lk){ lk.done=true; lk.s=final; store.set(KEY_LOCK,JSON.stringify(lk)); }
+    const b=loadBoard();
+    b.push({id:markId,n:g.name,s:final,v:c,c:c,t:secs});
+    b.sort((x,y)=>y.s-x.s||x.t-y.t);
+    saveBoard(b.slice(0,10));
+  }
+  renderBoard($("boardRes"),$("boardResCard"),markId);
+
+  const rv=$("review"); rv.innerHTML="";
+  $("reviewWrap").hidden=g.wrongs.length===0;
+  $("btnRetry").hidden=true;   // latihan ulang dimatikan
+  $("btnRetry").textContent="Latih "+g.wrongs.length+" soal yang salah";
+  g.wrongs.forEach((w,k)=>{
+    const d=document.createElement("details"); d.className="rev";
+    const sm=document.createElement("summary");
+    sm.textContent=(k+1)+". "+(w.q.q.length>90?w.q.q.slice(0,90)+"…":w.q.q);
+    const inn=document.createElement("div"); inn.className="in";
+    const p1=document.createElement("p"); p1.textContent=w.q.q; inn.appendChild(p1);
+    if(w.q.c){const pre=document.createElement("pre");pre.className="code";pre.innerHTML=hi(w.q.c);inn.appendChild(pre);}
+    const p2=document.createElement("p"); p2.innerHTML="<b>Jawabanmu:</b> "; p2.appendChild(document.createTextNode(w.picked));
+    const p3=document.createElement("p"); p3.innerHTML="<b>Jawaban benar:</b> "; p3.appendChild(document.createTextNode(w.right));
+    const p4=document.createElement("p"); p4.textContent=w.q.e;
+    inn.append(p2,p3,p4);
+    d.append(sm,inn); rv.appendChild(d);
+  });
+  g.lastWrongQs=g.wrongs.map(w=>w.q);
+  g.summary="Program: Devi Afnita\nNama: "+g.name+"\nSkor: "+fmtScore(final)+" dari "+(N*POINTS)+"\nBenar: "+c+" dari "+N+"\nSalah: "+(N-c)+"\nTabrakan (mobil/lubang): "+g.hits+" kali, pengurangan "+fmtScore(g.penalty)+"\nWaktu: "+fmt(secs);
+  $("btnCopy").textContent="Salin hasil";
+  show("result");
+}
+
+/* ---------- Tombol & keyboard ---------- */
+function tryStart(){
+  if(getLock()){ applyLock(); return; }
+  const nm=($("nama").value||"").trim();
+  if(!nm){ $("namaErr").hidden=false; $("nama").focus(); return; }
+  $("namaErr").hidden=true;
+  store.set("sirkuit-nama",nm);
+  store.set(KEY_LOCK,JSON.stringify({n:nm,t:Date.now(),done:false}));
+  startGame(buildList(),"full",nm);
+}
+$("btnStart").addEventListener("click",tryStart);
+$("nama").addEventListener("keydown",e=>{if(e.key==="Enter")tryStart();});
+$("nama").addEventListener("input",()=>{$("namaErr").hidden=true;});
+$("btnNext").addEventListener("click",next);
+$("btnAgain").addEventListener("click",()=>{
+  renderBoard($("boardStart"),$("boardStartCard"));
+  applyLock();
+  show("start");
+});
+$("btnRetry").addEventListener("click",()=>{
+  return;   // dimatikan: siswa tidak bisa mengulang soal
+  if(!G||!G.lastWrongQs||!G.lastWrongQs.length) return;
+  const list=shuffle(G.lastWrongQs);
+  startGame(list,"retry",G.name);
+});
+$("btnCopy").addEventListener("click",async()=>{
+  if(!G) return;
+  let ok=false;
+  try{ if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(G.summary); ok=true; } }catch(e){}
+  if(!ok){
+    try{
+      const ta=document.createElement("textarea"); ta.value=G.summary; ta.setAttribute("readonly","");
+      ta.style.position="fixed"; ta.style.top="0"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,99999);
+      ok=document.execCommand("copy"); document.body.removeChild(ta);
+    }catch(e){}
+  }
+  $("btnCopy").textContent=ok?"Tersalin ✓":"Gagal menyalin";
+  setTimeout(()=>{$("btnCopy").textContent="Salin hasil";},2000);
+});
+$("btnClear").addEventListener("click",()=>{
+  askPin("Masukkan PIN guru untuk menghapus papan skor perangkat ini:",()=>{ saveBoard([]); renderBoard($("boardStart"),$("boardStartCard")); });
+});
+document.addEventListener("keydown",e=>{
+  if(screens.game.hidden||!G||G.finished||e.ctrlKey||e.metaKey||e.altKey) return;
+  const k=e.key.toLowerCase();
+  if(G.state==="question"){
+    if(G.locked) return;
+    let i="abcd".indexOf(k);
+    if(i<0) i=["1","2","3","4"].indexOf(k);
+    if(i>=0&&i<G.opts.length) choose(i);
+    return;
+  }
+  if(k==="arrowleft"||k==="a"){e.preventDefault();steer(-1);}
+  else if(k==="arrowright"||k==="d"){e.preventDefault();steer(1);}
+});
+
+const savedName=store.get("sirkuit-nama"); if(savedName) $("nama").value=savedName;
+renderBoard($("boardStart"),$("boardStartCard"));
+applyLock();
+})();
+</script>
+</body>
+</html>
